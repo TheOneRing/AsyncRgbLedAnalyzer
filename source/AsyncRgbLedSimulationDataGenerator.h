@@ -3,6 +3,7 @@
 
 #include <SimulationChannelDescriptor.h>
 #include <string>
+
 class AsyncRgbLedAnalyzerSettings;
 
 class AsyncRgbLedSimulationDataGenerator
@@ -19,11 +20,17 @@ protected:
 	U32 mSimulationSampleRateHz;
 
 protected:
-	void CreateSerialByte();
-	std::string mSerialText;
-	U32 mStringIndex;
+	void CreateRGBWord();
+	U32 RandomRGBValue() const;
 
-	SimulationChannelDescriptor mSerialSimulationData;
+	void WriteRGBTriple( U8 red, U8 green, U8 blue );
+	void WriteUIntData( U32 data, U8 bit_count );
+	void WriteBit(bool b);
+	void WriteReset();
+
+	SimulationChannelDescriptor mLEDSimulationData;
+
+	U8 mSampleCounts[2][2] = {{0,0}, {0,0}};
 
 };
 #endif //ASYNCRGBLED_SIMULATION_DATA_GENERATOR
