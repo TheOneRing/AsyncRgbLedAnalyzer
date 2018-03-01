@@ -43,7 +43,8 @@ void AsyncRgbLedSimulationDataGenerator::Initialize( U32 simulation_sample_rate,
 
 	mLEDSimulationData.SetChannel( mSettings->mInputChannel );
 	mLEDSimulationData.SetSampleRate( simulation_sample_rate );
-	mLEDSimulationData.SetInitialBitState( BIT_HIGH );
+	//the channel will be kept low by default in between operations.
+	mLEDSimulationData.SetInitialBitState( BIT_LOW );
 }
 
 U32 AsyncRgbLedSimulationDataGenerator::GenerateSimulationData( U64 largest_sample_requested, U32 sample_rate, SimulationChannelDescriptor** simulation_channel )
@@ -80,10 +81,10 @@ void AsyncRgbLedSimulationDataGenerator::WriteRGBTriple( U8 red, U8 green, U8 bl
 
 void AsyncRgbLedSimulationDataGenerator::WriteReset()
 {
+	//we assime that the channel is already low, and we will leave it low when we leave the rest function.
 	const U32 nSecPerSample = 1000000000 / mSimulationSampleRateHz;
-	mLEDSimulationData.TransitionIfNeeded(BIT_LOW); // go low
+
 	mLEDSimulationData.Advance( RESET_NSEC / nSecPerSample );
-	mLEDSimulationData.Transition(); // go high to end the reset
 }
 
 void AsyncRgbLedSimulationDataGenerator::WriteUIntData( U32 data, U8 bit_count )
@@ -97,11 +98,11 @@ void AsyncRgbLedSimulationDataGenerator::WriteUIntData( U32 data, U8 bit_count )
 
 void AsyncRgbLedSimulationDataGenerator::WriteBit(bool b)
 {
-	mLEDSimulationData.TransitionIfNeeded(BIT_HIGH);
+	//we assume that the channel is already low, and we will leave it low when we exit the write bit function.
+	mLEDSimulationData.Transition();
 	mLEDSimulationData.Advance( mSampleCounts[b][0] );
 	mLEDSimulationData.Transition(); // go low
 	mLEDSimulationData.Advance( mSampleCounts[b][1] );
-	mLEDSimulationData.Transition(); // go high to end this bit
 }
 
 U32 AsyncRgbLedSimulationDataGenerator::RandomRGBValue() const

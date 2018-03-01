@@ -40,7 +40,7 @@ AsyncRgbLedAnalyzerSettings::~AsyncRgbLedAnalyzerSettings()
 bool AsyncRgbLedAnalyzerSettings::SetSettingsFromInterfaces()
 {
 	mInputChannel = mInputChannelInterface->GetChannel();
-	mLEDController = static_cast<Controller>(mControllerInterface->GetNumber());
+	mLEDController = static_cast<Controller>( static_cast<int>(mControllerInterface->GetNumber()));
 
 	ClearChannels();
 	AddChannel( mInputChannel, DEFAULT_CHANNEL_NAME, true );
